@@ -20,3 +20,8 @@ OPTIONS:
     -p, --port <port>        set the port to filter packets
     -u, --url <URL>          set the url to filter packets
 ```
+# example
+```
+~ ./target/debug/tcpdump-helper -A -i em1 -X GET -p 12345 -u /users
+tcpdump -i em1 -Ann ' port 12345 and  tcp[((tcp[12:1] & 0xf0) >> 2):4]=0x47455420 and tcp[((tcp[12:1] & 0xf0) >> 2)+5:4]=0x2F757365'
+```

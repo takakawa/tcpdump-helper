@@ -67,7 +67,7 @@ fn main() {
 
    if let Some(url) = matches.value_of("url") {
 		let len =  std::cmp::max(4,url.len());
-		write!(&mut tcpdump_command, " and {}","tcp[((tcp[12:1] & 0xf0) >> 2)+5:4]=0x");
+		write!(&mut tcpdump_command, " and {}","tcp[((tcp[12:1] & 0xf0) >> 2)+4:4]=0x");
 		let mut i = 0;
 		for &byte in  url.as_bytes() {
 			write!(&mut tcpdump_command, "{:X}", byte).expect("unable to write");

@@ -40,6 +40,7 @@ fn main() {
 	let post_code = "0x504f5354";
 	let put_code = "0x50555420";
 
+	let mut url_offset = 4;
 	let mut tcpdump_command = "tcpdump ".to_string();
 
 
@@ -57,25 +58,27 @@ fn main() {
 		tcpdump_command.push_str(" tcp[((tcp[12:1] & 0xf0) >> 2):4]=");
 		let code = match method {
 		  "GET" => get_code,
-          "POST" => post_code,
+          "POST" =>{
+			 url_offset=5;
+			 post_code
+			}
           "PUT" => put_code,
 			_ => get_code,
 		};
-        
 		tcpdump_command.push_str(code);
+	}else{
+
+		tcpdump_command.push_str(" tcp[((tcp[12:1] & 0xf0) >> 2):4]=0x47455420 ");
 	}
 
    if let Some(url) = matches.value_of("url") {
-		let len =  std::cmp::max(4,url.len());
-		write!(&mut tcpdump_command, " and {}","tcp[((tcp[12:1] & 0xf0) >> 2)+4:4]=0x");
-		let mut i = 0;
-		for &byte in  url.as_bytes() {
+
+		write!(&mut tcpdump_command, " and tcp[((tcp[12:1] & 0xf0) >> 2)+{}:4]=0x",url_offset);
+
+		for byte in  url.as_bytes() {
 			write!(&mut tcpdump_command, "{:X}", byte).expect("unable to write");
-            i=i+1;
-            if i > 3 {
-				break;
-			}
 		}
+        println!("url is {}",url);
 	}
 
 	write!(tcpdump_command,"\'");

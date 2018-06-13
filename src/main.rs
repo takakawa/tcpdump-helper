@@ -74,11 +74,15 @@ fn main() {
    if let Some(url) = matches.value_of("url") {
 
 		write!(&mut tcpdump_command, " and tcp[((tcp[12:1] & 0xf0) >> 2)+{}:4]=0x",url_offset);
-
+		
+		let mut i = 0;
 		for byte in  url.as_bytes() {
 			write!(&mut tcpdump_command, "{:X}", byte).expect("unable to write");
+			i = i + 1;
+			if i > 3 {
+				break;
+			}
 		}
-        println!("url is {}",url);
 	}
 
 	write!(tcpdump_command,"\'");
